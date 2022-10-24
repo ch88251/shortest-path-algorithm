@@ -10,7 +10,7 @@ using std::istringstream;
 using std::string;
 using std::vector;
 
-enum class State {kEmpty, kObstacle, kFinish};
+enum class State {kEmpty, kObstacle, kClosed, kFinish};
 
 vector<State> ParseLine(string line) {
     istringstream sline(line);
@@ -43,9 +43,15 @@ vector<vector<State>> ReadBoardFile(string path) {
 string CellString(State cell) {
   switch(cell) {
     case State::kObstacle: return   "🚧   ";
+    case State::kClosed:   return   "🔴   ";
     case State::kFinish:   return   "🏁   ";
     default: return                 "🟢   "; 
   }
+}
+
+void AddToOpen(int x, int y, int g, int h, vector<vector<int>> &open, vector<vector<State>> &grid) {
+  open.push_back(vector<int>{x, y, g, h});
+  grid[x][y] = State::kClosed;
 }
 
 int Heuristic(int x1, int y1, int x2, int y2) {
@@ -76,5 +82,6 @@ int main() {
   PrintBoard(board);
 
   TestHeuristic();
+  TestAddToOpen();
 }
 
